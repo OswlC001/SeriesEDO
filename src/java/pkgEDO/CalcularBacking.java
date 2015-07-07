@@ -129,11 +129,6 @@ public class CalcularBacking {
             respuesta += "</br></br>";
 
             respuesta += formulaDeRecurrencia(arrayEcuacion);
-            
-            for (int i = 0; i < arrayEcuacion.length; i++) {
-                respuesta += "</br>Termino " + (i + 1) + ": " + arrayEcuacion[i];
-                respuesta += " Orden: " + (arrayEcuacion[i].length() -1);
-            }
 
         } catch (Exception e) {
             respuesta += "Error: " + e;
@@ -151,16 +146,16 @@ public class CalcularBacking {
         return texto;
     }
 
-    private String formulaDeRecurrencia( String[] arrayEcuacion) {      
+    private String formulaDeRecurrencia(String[] arrayEcuacion) {
         String coc = obtenerCociente(arrayEcuacion);
         String den = obtenerDenominador(arrayEcuacion);
         String num = obtenerNumerador(arrayEcuacion);
-        
-        String respuestaL = "";        
+
+        String respuestaL = "";
         respuestaL += "<table border='0'>";
         respuestaL += "  <tr>";
         respuestaL += "    <td>";
-        respuestaL +=  coc;
+        respuestaL += coc;
         respuestaL += "    </td>";
         respuestaL += "    <td>";
         respuestaL += " = ";
@@ -170,7 +165,7 @@ public class CalcularBacking {
         respuestaL += "  </tr>";
         respuestaL += "  <tr>";
         respuestaL += "    <td>";
-        respuestaL +=  num;
+        respuestaL += num;
         respuestaL += "    </td>";
         respuestaL += "  </tr>";
         respuestaL += "  <tr>";
@@ -180,7 +175,7 @@ public class CalcularBacking {
         respuestaL += "  </tr>";
         respuestaL += "  <tr>";
         respuestaL += "    <td>";
-        respuestaL +=  den;
+        respuestaL += den;
         respuestaL += "    </td>";
         respuestaL += "  </tr>";
         respuestaL += "</table>";
@@ -192,21 +187,62 @@ public class CalcularBacking {
     }
 
     private String obtenerCociente(String[] arrayEcuacion) {
-        int orden = arrayEcuacion[0].length() -1;
-        String strOrd = "C<sub>k+" + orden + "</sub> ";
-        return strOrd;
+        int orden = arrayEcuacion[0].length() - 1;
+        String strR = "C<sub>k+" + orden + "</sub> ";
+        return strR;
     }
 
     private String obtenerDenominador(String[] arrayEcuacion) {
-        int orden = arrayEcuacion[0].length() -1;
-        String strOrd = "C<sub>k+" + orden + "</sub> ";
-        return strOrd; 
+        int orden = arrayEcuacion[0].length() - 1;
+        String strR = "";
+        for (int i = orden; i > 0; i--) {
+            strR += "(k+" + i + ")";
+        }
+        return strR;
     }
 
     private String obtenerNumerador(String[] arrayEcuacion) {
-        int orden = arrayEcuacion[0].length() -1;
-        String strOrd = "C<sub>k+" + orden + "</sub> ";
-        return strOrd;
+        String strR = "";
+        int[] signos = obtSignos(arrayEcuacion);
+        for (int i = 1; i < arrayEcuacion.length - 1; i++) {
+            int orden = arrayEcuacion[i].length() - 1;
+            if (signos[i] == 1) {
+                strR += " - ";
+            } else {
+                if (i == 1) {
+                    strR += " ";
+                } else {
+                    strR += " + ";
+                }
+            }
+            if (orden > 0) {
+                strR += "C<sub>k+" + orden + "</sub>";
+            } else {
+                strR += "C<sub>k</sub>";
+            }
+            for (int j = orden; j > 0; j--) {
+                strR += "(k+" + j + ")";
+            }
+        }
+
+        return strR;
+    }
+
+    private int[] obtSignos(String[] arrayEcuacion) {
+        int[] signos = new int[100];
+        String signo;
+        int ind, indAux = 1;
+        for (int k = 1, l = 1; k < arrayEcuacion.length - 1; k++, l++) {
+            ind = dato.indexOf(arrayEcuacion[k], indAux);
+            indAux = ind + 1;
+            signo = dato.substring(ind - 1, ind);
+            if (signo.equals("+")) {
+                signos[l] = 1;
+            } else {
+                signos[l] = -1;
+            }
+        }
+        return signos;
     }
 
 }
