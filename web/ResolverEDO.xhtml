@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <f:view contentType="text/html">
+        <h:head>
+            <f:facet name="first">
+                <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+                <h:outputStylesheet library="css" name="estilo.css"/>
+                <title>EDO</title>
+            </f:facet>
+        </h:head>
+
+        <h:body>
+            <h:form id="formCalcular">
+                <center>
+                    <br/>
+                    <h:panelGrid columns="2">
+                        <p:panel header="Calcular EDO por serie de potencias" style="text-align: center; width: 250px; height: 500px">
+                            <br/>
+                            <h:panelGrid columns="1">
+                                <p:inputText id="numero" value="#{calcularBacking.dato}" style="text-align: right"/> 
+                                <p:commandLink value="Limpiar" style="font-size: 10px;" action="#{calcularBacking.limpiar()}" update="numero"/>
+                            </h:panelGrid> 
+                            <h:panelGrid columns="4">
+                                <p:commandButton value="1" action="#{calcularBacking.leerDato('1')}" update="numero"/>
+                                <p:commandButton value="2" action="#{calcularBacking.leerDato('2')}" update="numero"/>
+                                <p:commandButton value="3" action="#{calcularBacking.leerDato('3')}" update="numero"/>
+                                <p:commandButton value="←" style="width: 55px" action="#{calcularBacking.leerDato('')}" update="numero"/>
+
+                                <p:commandButton value="4" action="#{calcularBacking.leerDato('4')}" update="numero"/>
+                                <p:commandButton value="5" action="#{calcularBacking.leerDato('5')}" update="numero"/>
+                                <p:commandButton value="6" action="#{calcularBacking.leerDato('6')}" update="numero"/>
+                                <p:commandButton value="+" style="width: 55px" action="#{calcularBacking.leerDato('+')}" update="numero"/>
+
+                                <p:commandButton value="7" action="#{calcularBacking.leerDato('7')}" update="numero"/>
+                                <p:commandButton value="8" action="#{calcularBacking.leerDato('8')}" update="numero"/>
+                                <p:commandButton value="9" action="#{calcularBacking.leerDato('9')}" update="numero"/>
+                                <p:commandButton value="-" style="width: 55px" action="#{calcularBacking.leerDato('-')}" update="numero"/>
+
+                                <p:commandButton value="0" action="#{calcularBacking.leerDato('0')}" update="numero"/>
+                                <p:commandButton value="x" action="#{calcularBacking.leerDato('x')}" update="numero"/>
+                                <p:commandButton value="y" action="#{calcularBacking.leerDato('y')}" update="numero"/>
+                                <p:commandButton value="=" style="width: 55px" action="#{calcularBacking.leerDato('=')}" update="numero"/>
+                            </h:panelGrid>                                             
+                            <br/>
+                            <h:panelGrid columns="3">
+                                <p:commandButton value="D1" action="#{calcularBacking.leerDato('\'')}" update="numero"/>
+                                <p:commandButton value="D2" action="#{calcularBacking.leerDato('\'\'')}" update="numero"/>
+                                <p:commandButton value="D3" action="#{calcularBacking.leerDato('\'\'\'')}" update="numero"/>
+                            </h:panelGrid>
+
+                            <h:panelGrid columns="2">
+                                <p:commandButton value="^2" action="#{calcularBacking.leerDato('&sup2;')}" update="numero"/>
+                                <p:commandButton value="^3" action="#{calcularBacking.leerDato('&sup3;')}" update="numero"/>
+                            </h:panelGrid>
+                            <br/>
+                            <p:commandButton id="botonLlamar" value="Calcular" action="#{calcularBacking.calcular()}" update="formCalcular"/>
+                        </p:panel>
+                        <p:panel style="width: 900px;border: 0;">
+                            <h:outputText escape="false" value="#{calcularBacking.respuesta}"/>  
+                        </p:panel>
+                    </h:panelGrid>
+                </center>
+            </h:form>
+        </h:body>
+    </f:view>
+</html>
+
