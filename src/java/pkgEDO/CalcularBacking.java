@@ -23,12 +23,15 @@ public class CalcularBacking {
     private boolean verCalcauladora = true;
     Derivar derivar = new Derivar();
     List<Elemento> serie;
+    List<Elemento> serieSimp;
+    private int ordenE;
 
     /**
      * Creates a new instance of LlamadasBacking
      */
     public CalcularBacking() {
         this.serie = new ArrayList<>();
+        this.serieSimp = new ArrayList<>();
     }
 
     public String getDato() {
@@ -80,19 +83,20 @@ public class CalcularBacking {
             }
 
             int orden = arrayEcuacion[0].length();
+            ordenE = orden - 1;
 
             respuesta += "</br></br> Orden de la Ecuación: " + (orden - 1);
 
-            String der, serie = "C(x)^n", serieStr = "<big>∑<sup>∞</sup></big><sub>n=0</sub> <big>[</big>  C<sub>n</sub>(x)<sup>n</sup> <big>]</big>";
+            String der, serie2 = "C(x)^n", serieStr = "<big>∑<sup>∞</sup></big><sub>n=0</sub> <big>[</big>  C<sub>n</sub>(x)<sup>n</sup> <big>]</big>";
             respuesta += "</br></br>* Serie : " + serieStr;
 
             String[] arrayEDOComp = new String[100];
             arrayEDOComp[0] = serieStr;
 
             for (int i = 1; i < orden; i++) {
-                der = derivar.Derivar(serie);
+                der = derivar.Derivar(serie2);
                 String aux = der;
-                serie = aux;
+                serie2 = aux;
                 respuesta += "</br>D" + i + "[f(x)]: " + darFormato(aux, i);
                 arrayEDOComp[i] = darFormato(aux, i);
             }
@@ -154,6 +158,10 @@ public class CalcularBacking {
             respuesta += "</br></br>";
 
             respuesta += generarSerie();
+
+            respuesta += "</br></br>";
+
+            respuesta += impSerieSimp();
 
         } catch (Exception e) {
             respuesta += "Error: " + e;
@@ -405,18 +413,27 @@ public class CalcularBacking {
         return e;
     }
 
-    private String cargarSubElementos(Elemento elemento, int sigAcum, int numAcum, int denAcum) {
+    private String cargarSubElementos(Elemento elemento, int sigAcum, int numAcum, int denAcum, String var) {
         String subElementosStr = "";
 
         for (Elemento subElemento : elemento.getSubElementos()) {
             if (existeElemento(subElemento)) {
-                subElementosStr += cargarSubElementos(subElemento, sigAcum * subElemento.getSigno(), numAcum * subElemento.getNumerador(), denAcum * subElemento.getDenominador());
+                subElementosStr += cargarSubElementos(subElemento, sigAcum * subElemento.getSigno(), numAcum * subElemento.getNumerador(), denAcum * subElemento.getDenominador(), var);
             } else {
                 subElementosStr += "<td><table><tr><td align='center'>";
                 subElementosStr += subElemento.getSigno() * sigAcum == -1 ? "-" : "+";
                 subElementosStr += subElemento.getNumerador() * numAcum > 1 ? subElemento.getNumerador() * numAcum : "";
                 subElementosStr += subElemento.getId() + "</td></tr><tr><td align='center'; style='border-top: solid black 1px'>";
                 subElementosStr += subElemento.getDenominador() * denAcum + "</td></tr></table></td>";
+
+                //Cargar elementos en serieSimp
+                Elemento e = new Elemento();
+                e.setSigno(subElemento.getSigno() * sigAcum);
+                e.setNumerador(subElemento.getNumerador() * numAcum);
+                e.setId(subElemento.getId());
+                e.setDenominador(subElemento.getDenominador() * denAcum);
+                e.setVar(var);
+                serieSimp.add(e);
             }
         }
 
@@ -424,11 +441,37 @@ public class CalcularBacking {
     }
 
     private String generarSerie() {
-        String serieStr = "<table><tr><td>Serie: f(x) = </td><td>1</td>";
+        String serieStr = "<table><tr><td>Serie:f(x)=</td>";
         int i = 0;
         for (Elemento elemento : serie) {
-            serieStr += "<td>+<big style='font-size: 200%;'>[</big></td>" + cargarSubElementos(elemento, 1, 1, 1) + "<td><big style='font-size: 200%;'>]</big>x<sup>" + i++ + "</sup></td>";
+            serieStr += "<td><big style='font-size: 200%;'>[</big></td>" + cargarSubElementos(elemento, 1, 1, 1, "x<sup>" + i + "</sup>") + "<td><big style='font-size: 200%;'>]</big>x<sup>" + i++ + "</sup>+</td>";
         }
-        return serieStr + "<td>+...</td></tr></table>";
+        return serieStr + "<td>...</td></tr></table>";
+    }
+
+    private String impSerieSimp() {
+        String serieStr = "<table><tr><td>Serie Simplificada:f(x)=</td>";
+        for (int i = 0; i < serie.size(); i++) {
+            serieStr += "<td><big style='font-size: 200%;'>[</big><td>";
+            for (int j = 0; j < ordenE; j++) {
+                Elemento e = new Elemento();
+                for (Elemento elemento_h : serieSimp) {
+                    if (elemento_h.getVar().trim().equals("x<sup>" + i + "</sup>")) {
+                        if (elemento_h.getId().trim().equals("C<sub>" + j + "</sub>")) {
+                            e.setNumerador((elemento_h.getSigno() * elemento_h.getNumerador() * e.getDenominador()) + (e.getSigno() * e.getNumerador() * elemento_h.getDenominador()));
+                            e.setId(elemento_h.getId());
+                            e.setDenominador(elemento_h.getDenominador() * e.getDenominador());
+                            e.setSigno(elemento_h.getSigno() * e.getSigno());
+                            e = e.simplificar();
+                        }
+                    }
+                }
+                if (e.getNumerador() != 0) {
+                    serieStr += "<td><table><tr><td align='center'>" + (e.getNumerador() > 0 ? '+' : ' ') + e.getNumerador() + e.getId() + "</td></tr><tr><td align='center'; style='border-top: solid black 1px'>" + e.getDenominador() + "</td></tr></table></td>";
+                }
+            }
+            serieStr += "<td><big style='font-size: 200%;'>]</big>x<sup>" + i + "</sup>+<td>";
+        }
+        return serieStr + "<td>...</td></tr></table>";
     }
 }

@@ -15,6 +15,7 @@ import java.util.List;
 public class Elemento {
 
     private String id;
+    private String var;
     private int numerador;
     private int denominador;
     private int signo;
@@ -22,18 +23,11 @@ public class Elemento {
 
     public Elemento() {
         this.id = "";
+        this.var = "";
         this.numerador = 0;
         this.denominador = 1;
         this.signo = 1;
         this.subElementos = new ArrayList<>();
-    }
-
-    public Elemento(String id, int numerador, int denominador, int signo, List<Elemento> subElementos) {
-        this.id = id;
-        this.numerador = numerador;
-        this.denominador = denominador;
-        this.signo = signo;
-        this.subElementos = subElementos;
     }
 
     public String getId() {
@@ -66,6 +60,14 @@ public class Elemento {
 
     public void setSigno(int signo) {
         this.signo = signo;
+    }
+
+    public String getVar() {
+        return var;
+    }
+
+    public void setVar(String var) {
+        this.var = var;
     }
 
     public List<Elemento> getSubElementos() {
@@ -101,4 +103,25 @@ public class Elemento {
         return elementos;
     }
 
+    public Elemento simplificar() {
+        int dividir = mcd();
+        numerador /= dividir;
+        denominador /= dividir;
+        return this;
+    }
+
+    int mcd() {
+        int u = Math.abs(numerador);
+        int v = Math.abs(denominador);
+        if (v == 0) {
+            return u;
+        }
+        int r;
+        while (v != 0) {
+            r = u % v;
+            u = v;
+            v = r;
+        }
+        return u;
+    }
 }
