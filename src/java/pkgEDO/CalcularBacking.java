@@ -422,7 +422,7 @@ public class CalcularBacking {
             } else {
                 subElementosStr += "<td><table><tr><td align='center'>";
                 subElementosStr += subElemento.getSigno() * sigAcum == -1 ? "-" : "+";
-                subElementosStr += subElemento.getNumerador() * numAcum > 1 ? subElemento.getNumerador() * numAcum : "";
+                subElementosStr += subElemento.getNumerador() * numAcum;
                 subElementosStr += subElemento.getId() + "</td></tr><tr><td align='center'; style='border-top: solid black 1px'>";
                 subElementosStr += subElemento.getDenominador() * denAcum + "</td></tr></table></td>";
 
@@ -450,7 +450,7 @@ public class CalcularBacking {
     }
 
     private String impSerieSimp() {
-        String serieStr = "<table><tr><td>Serie Simplificada:f(x)=</td>";
+        String serieStr = "<table><tr><td>Serie_Simp:f(x)=</td>";
         for (int i = 0; i < serie.size(); i++) {
             serieStr += "<td><big style='font-size: 200%;'>[</big><td>";
             for (int j = 0; j < ordenE; j++) {

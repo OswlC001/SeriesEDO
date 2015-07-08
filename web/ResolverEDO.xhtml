@@ -16,7 +16,7 @@
             <h:form id="formCalcular">
                 <center>
                     <p:panel style="border: 0;" rendered="#{calcularBacking.verCalcauladora}">
-                    <br/>
+                        <br/>
                     </p:panel>
                     <p:panel header="Calcular EDO por serie de potencias" style="text-align: center; width: 250px; height: 500px;" rendered="#{calcularBacking.verCalcauladora}">
                         <br/>
@@ -64,9 +64,11 @@
                     <h:outputText escape="false" value="#{calcularBacking.respuesta}" style="width: max-content"/>  
                 </p:panel>
                 <center>
+                    <br/>
+                    <br/>
                     <p:commandButton rendered="#{!calcularBacking.verCalcauladora}" id="botonVer" value="Calcular Nueva EDO" action="#{calcularBacking.verCalc}" update="formCalcular"/>
                 </center>
-                <br/>
+                <br/><br/>
             </h:form>
         </h:body>
     </f:view>
