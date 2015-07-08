@@ -5,6 +5,7 @@
  */
 package pkgEDO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,6 +19,22 @@ public class Elemento {
     private int denominador;
     private int signo;
     private List<Elemento> subElementos;
+
+    public Elemento() {
+        this.id = "";
+        this.numerador = 0;
+        this.denominador = 1;
+        this.signo = 1;
+        this.subElementos = new ArrayList<>();
+    }
+
+    public Elemento(String id, int numerador, int denominador, int signo, List<Elemento> subElementos) {
+        this.id = id;
+        this.numerador = numerador;
+        this.denominador = denominador;
+        this.signo = signo;
+        this.subElementos = subElementos;
+    }
 
     public String getId() {
         return id;
@@ -61,20 +78,25 @@ public class Elemento {
 
     public String impElementos() {
         String elementos = "<table><tr>";
+        String sign;
         for (Elemento subElemento : subElementos) {
             elementos += "<td><table><tr><td align='center'>";
-            if (subElemento.getNumerador() > 1) {
-                elementos += subElemento.getSigno() * subElemento.getNumerador();
+
+            if (subElemento.getSigno() == -1) {
+                elementos += "-";
             } else {
-                if (subElemento.getSigno() == -1) {
-                    elementos += "-";
-                }
+                elementos += "+";
             }
-            elementos += subElemento.getId() + "</td></tr><tr><td>-------</td></tr><tr><td align='center'>";
+
+            if (subElemento.getNumerador() > 1) {
+                elementos += subElemento.getNumerador();
+            }
+
+            elementos += subElemento.getId() + "</td></tr><tr><td align='center'; style='border-top: solid black 1px'>";
             elementos += subElemento.getDenominador() + "</td></tr></table></td>";
         }
-        
-        elementos+="</tr></table>";
+
+        elementos += "</tr></table>";
 
         return elementos;
     }
