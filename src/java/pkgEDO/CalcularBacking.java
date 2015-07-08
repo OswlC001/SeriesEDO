@@ -348,6 +348,11 @@ public class CalcularBacking {
             }
 
             elementoAux.setId(idElem);
+
+            if (existeElemento(elementoAux)) {
+                elementoAux.setSubElementos(cargarElemento(elementoAux).getSubElementos());
+            }
+
             elementoAux.setNumerador(acumNum);
             elementoAux.setDenominador(denInt);
 
@@ -363,7 +368,7 @@ public class CalcularBacking {
         String respuestaL = "Cuando: <br/>";
         String coc, den, num;
         int denInt;
-        for (int k = 0; k <= 5; k++) {
+        for (int k = 0; k <= 10; k++) {
             coc = obtenerCocienteRec(arrayEcuacion, k);
             den = obtenerDenominadorRec(arrayEcuacion, k);
             num = obtenerNumeradorRec(arrayEcuacion, k);
@@ -378,30 +383,40 @@ public class CalcularBacking {
         return respuestaL;
     }
 
-    private Elemento buscarElemento(String id) {
-        Elemento elemento = null;
-        for (Elemento elem : serie) {
-            if (elem.getId().trim().equalsIgnoreCase(id)) {
-                elemento = elem;
+    private boolean existeElemento(Elemento elemento) {
+        boolean existe = false;
+        for (Elemento elemAux : serie) {
+            if (elemAux.getId().trim().equals(elemento.getId().trim())) {
+                existe = true;
                 break;
             }
         }
-        return elemento;
+        return existe;
     }
 
-    private String cargarSubElementos(Elemento elemento, Elemento elementoAnt) {
+    private Elemento cargarElemento(Elemento elemento) {
+        Elemento e = new Elemento();
+        for (Elemento elemAux : serie) {
+            if (elemAux.getId().trim().equals(elemento.getId().trim())) {
+                e = elemAux;
+                break;
+            }
+        }
+        return e;
+    }
+
+    private String cargarSubElementos(Elemento elemento, int sigAcum, int numAcum, int denAcum) {
         String subElementosStr = "";
+
         for (Elemento subElemento : elemento.getSubElementos()) {
-            if (buscarElemento(subElemento.getId()) != null) {
-                subElementosStr += cargarSubElementos(buscarElemento(subElemento.getId()), subElemento);
+            if (existeElemento(subElemento)) {
+                subElementosStr += cargarSubElementos(subElemento, sigAcum * subElemento.getSigno(), numAcum * subElemento.getNumerador(), denAcum * subElemento.getDenominador());
             } else {
-                if (elementoAnt != null) {
-                    subElementosStr += "<td><table><tr><td align='center'>";
-                    subElementosStr += subElemento.getSigno() * elementoAnt.getSigno() == -1 ? "-" : "+";
-                    subElementosStr += subElemento.getNumerador() * elementoAnt.getNumerador() > 1 ? subElementosStr += subElemento.getNumerador() * elementoAnt.getNumerador() : "";
-                    subElementosStr += subElemento.getId() + "</td></tr><tr><td align='center'; style='border-top: solid black 1px'>";
-                    subElementosStr += subElemento.getDenominador() * elementoAnt.getDenominador() + "</td></tr></table></td>";
-                }
+                subElementosStr += "<td><table><tr><td align='center'>";
+                subElementosStr += subElemento.getSigno() * sigAcum == -1 ? "-" : "+";
+                subElementosStr += subElemento.getNumerador() * numAcum > 1 ? subElemento.getNumerador() * numAcum : "";
+                subElementosStr += subElemento.getId() + "</td></tr><tr><td align='center'; style='border-top: solid black 1px'>";
+                subElementosStr += subElemento.getDenominador() * denAcum + "</td></tr></table></td>";
             }
         }
 
@@ -409,9 +424,10 @@ public class CalcularBacking {
     }
 
     private String generarSerie() {
-        String serieStr = "<table><tr><td>Serie: f(x) = </td>";
+        String serieStr = "<table><tr><td>Serie: f(x) = </td><td>1</td>";
+        int i = 0;
         for (Elemento elemento : serie) {
-            serieStr += "<td>" + elemento.getId() + "-></td>" + cargarSubElementos(elemento, elemento);
+            serieStr += "<td>+<big style='font-size: 200%;'>[</big></td>" + cargarSubElementos(elemento, 1, 1, 1) + "<td><big style='font-size: 200%;'>]</big>x<sup>" + i++ + "</sup></td>";
         }
         return serieStr + "<td>+...</td></tr></table>";
     }
